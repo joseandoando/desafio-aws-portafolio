@@ -1,12 +1,13 @@
 services:
   floci:
-    image: floci/floci:latest-compat
+    image: floci/floci:latest
     container_name: jose-data-lab-floci
     ports:
       - "4566:4566"
     environment:
       FLOCI_STORAGE_MODE: memory
       FLOCI_HOSTNAME: floci
+      FLOCI_SERVICES_DUCK_URL: http://floci-duck:3000
       FLOCI_SERVICES_ATHENA_DUCK_URL: http://floci-duck:3000
 
   floci-duck:
