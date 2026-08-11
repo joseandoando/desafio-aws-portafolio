@@ -20,15 +20,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Start Floci
-        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml up -d floci
+      - name: Start Floci and Athena sidecar
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml up -d floci floci-duck
 
       - name: Run PySpark S3 Glue Athena pipeline
         run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml run --rm pipeline
 
-      - name: Show Floci logs on failure
+      - name: Show local AWS logs on failure
         if: failure()
-        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml logs floci
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml logs floci floci-duck
 
       - name: Stop local environment
         if: always()
