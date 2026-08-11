@@ -1,0 +1,29 @@
+services:
+  floci:
+    image: floci/floci:latest-compat
+    container_name: jose-data-lab-floci
+    ports:
+      - "4566:4566"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./local/floci-data:/app/data
+    environment:
+      FLOCI_STORAGE_MODE: hybrid
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: local/Dockerfile
+    container_name: jose-data-lab-pipeline
+    depends_on:
+      - floci
+    environment:
+      AWS_ENDPOINT_URL: http://floci:4566
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      LAB_BUCKET: jose-data-engineering-lab-local
+      GLUE_DATABASE: jose_data_engineering_lab_db
+    volumes:
+      - .:/app
+    command: ["python", "local/run_local_pipeline.py"]
