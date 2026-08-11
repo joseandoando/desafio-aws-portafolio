@@ -1,0 +1,35 @@
+name: AWS Data Pipeline - Floci
+
+on:
+  push:
+    paths:
+      - "labs/aws-data-pipeline/**"
+      - ".github/workflows/aws-data-pipeline-floci.yml"
+  pull_request:
+    paths:
+      - "labs/aws-data-pipeline/**"
+      - ".github/workflows/aws-data-pipeline-floci.yml"
+  workflow_dispatch:
+
+jobs:
+  local-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Floci
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml up -d floci
+
+      - name: Run PySpark S3 Glue Athena pipeline
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml run --rm pipeline
+
+      - name: Show Floci logs on failure
+        if: failure()
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml logs floci
+
+      - name: Stop local environment
+        if: always()
+        run: docker compose -f labs/aws-data-pipeline/docker-compose.floci.yml down -v
