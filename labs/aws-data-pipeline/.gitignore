@@ -1,0 +1,7 @@
+local/floci-data/
+terraform-floci/.terraform/
+terraform-floci/.terraform.lock.hcl
+terraform-floci/terraform.tfstate
+terraform-floci/terraform.tfstate.backup
+__pycache__/
+*.pyc
