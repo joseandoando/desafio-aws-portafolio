@@ -1,0 +1,6 @@
+order_id,customer_id,product,quantity,unit_price,order_date
+1001,C001,Keyboard,1,45.90,2026-08-01
+1002,C002,Mouse,2,19.90,2026-08-01
+1003,C001,Monitor,1,219.00,2026-08-02
+1004,C003,USB-C Hub,2,34.50,2026-08-03
+1005,C004,Laptop Stand,1,39.90,2026-08-03
