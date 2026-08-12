@@ -1,0 +1,30 @@
+groups:
+  - name: sre-demo-slo-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(demo_http_requests_total{status=~"5.."}[2m]))
+          /
+          clamp_min(sum(rate(demo_http_requests_total[2m])), 0.001)
+          > 0.05
+        for: 2m
+        labels:
+          severity: page
+          slo: availability
+        annotations:
+          summary: "Demo service error rate is above 5%"
+          runbook: "docs/RUNBOOK.md#high-error-rate"
+
+      - alert: HighP95Latency
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum(rate(demo_http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          slo: latency
+        annotations:
+          summary: "Demo service p95 latency is above 500 ms"
+          runbook: "docs/RUNBOOK.md#high-p95-latency"
