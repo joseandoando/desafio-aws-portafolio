@@ -11,9 +11,8 @@ variable "project_name" {
 }
 
 variable "container_image" {
-  description = "Container image deployed to ECS. Replace with your ECR image for a real deployment."
+  description = "ECR image URI for the demo service"
   type        = string
-  default     = "public.ecr.aws/docker/library/nginx:alpine"
 }
 
 variable "desired_count" {
