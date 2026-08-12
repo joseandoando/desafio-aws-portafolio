@@ -1,0 +1,51 @@
+name: SRE Observability Lab
+
+on:
+  push:
+    paths:
+      - "labs/sre-observability-lab/**"
+      - ".github/workflows/sre-observability-lab.yml"
+  pull_request:
+    paths:
+      - "labs/sre-observability-lab/**"
+      - ".github/workflows/sre-observability-lab.yml"
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: labs/sre-observability-lab/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  local-observability:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: labs/sre-observability-lab
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start application and observability stack
+        run: docker compose up -d --build
+
+      - name: Run smoke test
+        run: bash scripts/smoke_test.sh
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop lab
+        if: always()
+        run: docker compose down -v
